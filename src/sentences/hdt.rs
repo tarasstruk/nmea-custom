@@ -72,13 +72,13 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::HDT,
             data: "274.07,T",
-            checksum: 0x03,
+            checksum: Some(0x03),
         })
         .unwrap();
         assert_relative_eq!(data.heading.unwrap(), 274.07);
 
         let s = parse_nmea_sentence("$GPHDT,,T*1B").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
 
         let data = parse_hdt(s);
         assert_eq!(data, Ok(HdtData { heading: None }));

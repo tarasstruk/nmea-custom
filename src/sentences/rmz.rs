@@ -84,8 +84,8 @@ mod tests {
     #[test]
     fn test_successful_parse() {
         let s = parse_nmea_sentence("$PGRMZ,2282,f,3*21").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x21);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x21);
 
         let data = parse_pgrmz(s).unwrap();
         assert_eq!(data.altitude, 2282);

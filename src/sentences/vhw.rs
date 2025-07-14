@@ -127,7 +127,7 @@ mod tests {
             message_id: SentenceType::AAM,
             data: "",
             talker_id: "GP",
-            checksum: 0,
+            checksum: Some(0),
         };
         assert_eq!(
             Err(Error::WrongSentenceHeader {
@@ -144,7 +144,7 @@ mod tests {
             message_id: SentenceType::VHW,
             talker_id: "GP",
             data: "100.5,T,105.5,M,10.5,N,19.4,K",
-            checksum: 0x4f,
+            checksum: Some(0x4f),
         };
         let vhw_data = parse_vhw(s).unwrap();
         assert_relative_eq!(vhw_data.heading_true.unwrap(), 100.5);
@@ -153,8 +153,8 @@ mod tests {
         assert_relative_eq!(vhw_data.relative_speed_kmph.unwrap(), 19.4);
 
         let s = parse_nmea_sentence("$GPVHW,100.5,T,105.5,M,10.5,N,19.4,K*4F").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x4F);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x4F);
 
         let vhw_data = parse_vhw(s).unwrap();
         assert_relative_eq!(vhw_data.heading_true.unwrap(), 100.5);
@@ -170,7 +170,7 @@ mod tests {
             message_id: SentenceType::VHW,
             talker_id: "GP",
             data: ",T,,M,,N,,K",
-            checksum: 0,
+            checksum: Some(0),
         };
         assert_eq!(
             parse_vhw(s),
@@ -187,7 +187,7 @@ mod tests {
             message_id: SentenceType::VHW,
             talker_id: "GP",
             data: ",T,,M,10.5,N,20.0,K",
-            checksum: 0,
+            checksum: Some(0),
         };
         assert_eq!(
             parse_vhw(s),
@@ -204,7 +204,7 @@ mod tests {
             message_id: SentenceType::VHW,
             talker_id: "GP",
             data: ",,,,,,,",
-            checksum: 0,
+            checksum: Some(0),
         };
         assert_eq!(
             parse_vhw(s),

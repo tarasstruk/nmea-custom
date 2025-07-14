@@ -197,7 +197,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::GGA,
             data: "033745.0,5650.82344,N,03548.9778,E,1,07,1.8,101.2,M,14.7,M,,",
-            checksum: 0x57,
+            checksum: Some(0x57),
         })
         .unwrap();
         assert_eq!(
@@ -213,7 +213,7 @@ mod tests {
         assert_relative_eq!(data.geoid_separation.unwrap(), 14.7);
 
         let s = parse_nmea_sentence("$GPGGA,,,,,,0,,,,,,,,*66").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
         let data = parse_gga(s).unwrap();
         assert_eq!(
             GgaData {
@@ -235,8 +235,9 @@ mod tests {
         let sentence =
             parse_nmea_sentence("$GPGGA,133605.0,5521.75946,N,03731.93769,E,0,00,,,M,,M,,*4F")
                 .unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x4f);
+        let checksum = sentence.calc_checksum();
+        assert_eq!(sentence.checksum.unwrap(), checksum);
+        assert_eq!(sentence.checksum.unwrap(), 0x4f);
         let data = parse_gga(sentence).unwrap();
         assert_eq!(data.fix_type.unwrap(), FixType::Invalid);
     }

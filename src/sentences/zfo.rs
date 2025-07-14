@@ -81,7 +81,7 @@ mod tests {
 
     fn run_parse_zfo(line: &str) -> Result<ZfoData, Error> {
         let s = parse_nmea_sentence(line).expect("ZFO sentence initial parse failed");
-        assert_eq!(s.checksum, s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
         parse_zfo(s)
     }
 

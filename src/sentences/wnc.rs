@@ -91,15 +91,15 @@ mod tests {
 
     fn run_parse_wnc(line: &str) -> Result<WncData, Error> {
         let s = parse_nmea_sentence(line).expect("WNC sentence initial parse failed");
-        assert_eq!(s.checksum, s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
         parse_wnc(s)
     }
 
     #[test]
     fn test_parse_wnc() {
         let sentence = parse_nmea_sentence("$GPWNC,200.00,N,370.40,K,Dest,Origin*58").unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x58);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x58);
 
         let data = run_parse_wnc("$GPWNC,200.00,N,370.40,K,Dest,Origin*58").unwrap();
         assert_relative_eq!(data.distance_nautical_miles.unwrap(), 200.00);

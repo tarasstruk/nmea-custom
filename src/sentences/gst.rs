@@ -91,7 +91,7 @@ mod tests {
 
     fn run_parse_gst(line: &str) -> Result<GstData, Error> {
         let s = parse_nmea_sentence(line).expect("GST sentence initial parse failed");
-        assert_eq!(s.checksum, s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
         parse_gst(s)
     }
 

@@ -79,8 +79,8 @@ mod tests {
     #[test]
     fn test_parse_mtw() {
         let s = parse_nmea_sentence("$INMTW,17.9,C*1B").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x1B);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x1B);
         let mtw_data = parse_mtw(s).unwrap();
         assert_eq!(Some(17.9), mtw_data.temperature);
     }
@@ -88,16 +88,16 @@ mod tests {
     #[test]
     fn test_parse_mtw_invalid_unit() {
         let s = parse_nmea_sentence("$INMTW,17.9,x*20").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x20);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x20);
         assert!(parse_mtw(s).is_err());
     }
 
     #[test]
     fn test_parse_mtw_invalid_temp() {
         let s = parse_nmea_sentence("$INMTW,x.9,C*65").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x65);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x65);
         assert!(parse_mtw(s).is_err());
     }
 }

@@ -155,8 +155,8 @@ mod tests {
             "$WIMDA,29.7544,I,1.0076,B,35.5,C,,,42.1,,20.6,C,116.4,T,107.7,M,1.2,N,0.6,M*66",
         )
         .unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x66);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x66);
         let mda_data = parse_mda(s).unwrap();
         assert_relative_eq!(29.7544, mda_data.pressure_in_hg.unwrap());
         assert_relative_eq!(1.0076, mda_data.pressure_bar.unwrap());

@@ -99,8 +99,8 @@ mod tests {
     #[test]
     fn test_parse_dbk() {
         let s = parse_nmea_sentence("$SDDBK,1330.5,f,0405.5,M,0221.6,F*2E").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x2E);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x2E);
         let dbk_data = parse_dbk(s).unwrap();
         assert_eq!(Some(1330.5), dbk_data.depth_feet);
         assert_eq!(Some(405.5), dbk_data.depth_meters);
@@ -109,56 +109,56 @@ mod tests {
     #[test]
     fn test_parse_dbk_invalid_depth_feet_value() {
         let s = parse_nmea_sentence("$SDDBK,1FF0.5,f,0405.5,M,0221.6,F*2E").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x2E);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x2E);
         assert!(parse_dbk(s).is_err());
     }
 
     #[test]
     fn test_parse_dbk_invalid_depth_feet_unit() {
         let s = parse_nmea_sentence("$SDDBK,1330.5,X,0405.5,M,0221.6,F*10").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x10);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x10);
         assert!(parse_dbk(s).is_err());
     }
 
     #[test]
     fn test_parse_dbk_invalid_depth_meters_value() {
         let s = parse_nmea_sentence("$SDDBK,1330.5,f,04F5.5,M,0221.6,F*58").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x58);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x58);
         assert!(parse_dbk(s).is_err());
     }
 
     #[test]
     fn test_parse_dbk_invalid_depth_meters_unit() {
         let s = parse_nmea_sentence("$SDDBK,1330.5,f,0405.5,X,0221.6,F*3B").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x3B);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x3B);
         assert!(parse_dbk(s).is_err());
     }
 
     #[test]
     fn test_parse_dbk_invalid_depth_fathoms_value() {
         let s = parse_nmea_sentence("$SDDBK,1330.5,f,0405.5,M,02F1.6,F*5A").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x5A);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x5A);
         assert!(parse_dbk(s).is_err());
     }
 
     #[test]
     fn test_parse_dbk_invalid_depth_fathoms_unit() {
         let s = parse_nmea_sentence("$SDDBK,1330.5,f,0405.5,M,0221.6,X*30").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x30);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x30);
         assert!(parse_dbk(s).is_err());
     }
 
     #[test]
     fn test_parse_dbk_invalid_sentence_type() {
         let s = parse_nmea_sentence("$INMTW,17.9,x*20").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x20);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x20);
         assert!(parse_dbk(s).is_err());
     }
 }

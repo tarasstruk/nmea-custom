@@ -83,7 +83,7 @@ mod tests {
 
     fn run_parse_ztg(line: &str) -> Result<ZtgData, Error> {
         let s = parse_nmea_sentence(line).expect("ZTG sentence initial parse failed");
-        assert_eq!(s.checksum, s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
         parse_ztg(s)
     }
 
