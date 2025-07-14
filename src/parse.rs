@@ -1,16 +1,15 @@
 use core::str;
 
 use nom::{
-    bytes::complete::{take, take_until},
+    bytes::complete::{take, take_while},
     character::complete::char,
     combinator::map_res,
     sequence::preceded,
     IResult,
 };
 
-use cfg_if::cfg_if;
-
 use crate::{sentences::*, Error, SentenceType};
+use cfg_if::cfg_if;
 
 /// The maximum message length parsable by the crate.
 ///
@@ -75,15 +74,21 @@ fn parse_sentence_type(i: &str) -> IResult<&str, SentenceType> {
     })(i)
 }
 
+fn take_while_no_star(s: &str) -> IResult<&str, &str> {
+    take_while(|c| c != '*')(s)
+}
+
 fn do_parse_nmea_sentence(i: &str) -> IResult<&str, NmeaSentence> {
     let (i, talker_id) = preceded(char('$'), take(2usize))(i)?;
     let (i, message_id) = parse_sentence_type(i)?;
     let (i, _) = char(',')(i)?;
-    let (i, data) = take_until("*")(i)?;
-    let (i, checksum) = parse_checksum(i)?;
-
-    // TODO rework it!
-    let checksum = Some(checksum);
+    let (i, data) = take_while_no_star(i)?;
+    let checksum = if i.len() > 0 {
+        let (_i, checksum) = parse_checksum(i)?;
+        Some(checksum)
+    } else {
+        None
+    };
 
     Ok((
         i,
@@ -484,5 +489,31 @@ fn convert_sentence_into_parse_result(nmea_sentence: NmeaSentence) -> Result<Par
             }
         }
         sentence_type => Ok(ParseResult::Unsupported(sentence_type)),
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::parse_str;
+
+    #[test]
+    fn parse_str_feed_with_correct_checksum() {
+        let input = "$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,*76";
+        let result = parse_str(input);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn parse_str_feed_with_incorrect_checksum() {
+        let input = "$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,*88";
+        let result = parse_str(input);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_str_feed_with_missing_checksum() {
+        let input = "$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,";
+        let result = parse_str(input);
+        assert!(result.is_ok());
     }
 }
