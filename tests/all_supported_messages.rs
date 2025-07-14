@@ -11,6 +11,8 @@ fn test_all_supported_messages() {
         (SentenceType::ALM, "$GPALM,1,1,15,1159,00,441D,4E,16BE,FD5E,A10C9F,4A2DA4,686E81,58CBE1,0A4,001*77"),
         // APA
         (SentenceType::APA, "$GPAPA,A,A,0.10,R,N,V,V,011,M,DEST,011,M*42"),
+        // APA without checksum:
+        (SentenceType::APA, "$GPAPA,A,A,0.10,R,N,V,V,011,M,DEST,011,M"),
         // BWC
         (SentenceType::BWC, "$GPBWC,220516,5130.02,N,00046.34,W,213.8,T,218.0,M,0004.6,N,EGLM*21"),
         // BWW
@@ -25,6 +27,8 @@ fn test_all_supported_messages() {
         (SentenceType::GSA, "$GPGSA,A,3,23,31,22,16,03,07,,,,,,,1.8,1.1,1.4*3E"),
         // GST
         (SentenceType::GST, "$GPGST,182141.000,15.5,15.3,7.2,21.8,0.9,0.5,0.8*54"),
+        // GST without checksum
+        (SentenceType::GST, "$GPGST,182141.000,15.5,15.3,7.2,21.8,0.9,0.5,0.8"),
         // GSV
         (SentenceType::GSV, "$GPGSV,3,1,12,01,49,196,41,03,71,278,32,06,02,323,27,11,21,196,39*72"),
         // HDT
