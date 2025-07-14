@@ -83,19 +83,22 @@ fn do_parse_nmea_sentence(i: &str) -> core::result::Result<NmeaSentence, Error<'
     let (i, message_id) = parse_sentence_type(i)?;
     let (i, _) = char(',')(i)?;
     let (i, data) = take_while_no_star(i)?;
-    let checksum = if i.len() > 0 {
-        let (_i, checksum) = parse_checksum(i)?;
-        Some(checksum)
-    } else {
-        None
-    };
 
-    Ok(NmeaSentence {
+    let mut sentence = NmeaSentence {
         talker_id,
         message_id,
         data,
-        checksum,
-    })
+        checksum: None,
+    };
+
+    if i.len() > 0 {
+        let (_i, checksum) = parse_checksum(i)?;
+        sentence.checksum = Some(checksum);
+    } else {
+        sentence.checksum = Some(sentence.calc_checksum());
+    };
+
+    Ok(sentence)
 }
 
 pub fn parse_nmea_sentence(sentence: &str) -> core::result::Result<NmeaSentence, Error<'_>> {
