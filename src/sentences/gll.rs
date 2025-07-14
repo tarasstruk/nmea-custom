@@ -106,8 +106,8 @@ mod tests {
     fn test_parse_gpgll() {
         let parse = |data, checksum| {
             let s = parse_nmea_sentence(data).unwrap();
-            assert_eq!(s.checksum, s.calc_checksum());
-            assert_eq!(s.checksum, checksum);
+            assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+            assert_eq!(s.checksum.unwrap(), checksum);
             s
         };
 

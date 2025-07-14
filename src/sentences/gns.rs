@@ -154,8 +154,8 @@ mod tests {
     #[test]
     fn test_parse_gns() {
         let s = parse_nmea_sentence("$GPGNS,224749.00,3333.4268304,N,11153.3538273,W,D,19,0.6,406.110,-26.294,6.0,0138,S,*46").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x46);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x46);
         let gns_data = parse_gns(s).unwrap();
         assert_eq!(
             gns_data.fix_time,

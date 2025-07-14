@@ -152,8 +152,8 @@ mod tests {
 
     fn assert_zda_sentence(sentence: &str, checksum: u8, expected: ZdaData) {
         let s = parse_nmea_sentence(sentence).unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, checksum);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), checksum);
         let zda_data = parse_zda(s).unwrap();
         assert_eq!(zda_data, expected);
     }
@@ -219,7 +219,7 @@ mod tests {
             message_id: SentenceType::AAM,
             data: "",
             talker_id: "GP",
-            checksum: 0,
+            checksum: Some(0),
         };
         assert_eq!(
             Err(Error::WrongSentenceHeader {
@@ -233,8 +233,8 @@ mod tests {
     #[test]
     fn test_parse_zda_datetime() {
         let s = parse_nmea_sentence("$GPZDA,160012.71,11,03,2004,-1,00*7D").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x7d);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x7d);
         let zda_data = parse_zda(s).unwrap();
         assert_eq!(
             zda_data.utc_date(),

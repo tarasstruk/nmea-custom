@@ -256,7 +256,7 @@ mod tests {
             talker_id: "RA",
             message_id: SentenceType::TTM,
             data: "00,0.5,187.5,T,12.0,17.6,T,0.0,1.2,N,TGT00,T,,100023.00,A",
-            checksum: 0x4e,
+            checksum: Some(0x4e),
         })
         .unwrap();
         assert_eq!(data.target_number.unwrap(), 0);
@@ -294,7 +294,7 @@ mod tests {
     #[test]
     fn test_parse_ttm_all_optional() {
         let s = parse_nmea_sentence("$RATTM,,,,,,,,,,,,,,,*72").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
 
         let data = parse_ttm(s);
         assert_eq!(

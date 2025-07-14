@@ -189,8 +189,8 @@ mod tests {
             "$GPALM,31,1,02,1617,00,50F6,0F,FD98,FD39,A10CF3,81389B,423632,BD913C,148,001*3C";
 
         let sentence = parse_nmea_sentence(sentence_string).unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x3C);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x3C);
 
         let data = parse_alm(sentence).unwrap();
         assert_eq!(

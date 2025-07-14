@@ -127,8 +127,8 @@ mod tests {
             "$GPBWC,220516,5130.02,N,00046.34,W,213.8,T,218.0,M,0004.6,N,EGLM*21",
         )
         .unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x21);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x21);
 
         let data = parse_bwc(sentence).unwrap();
 
@@ -147,8 +147,8 @@ mod tests {
     #[test]
     fn test_parse_bwc_with_optional_fields() {
         let sentence = parse_nmea_sentence("$GPBWC,081837,,,,,,T,,M,,N,*13").unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x13);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x13);
 
         let data = parse_bwc(sentence).unwrap();
 

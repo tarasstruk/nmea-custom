@@ -183,7 +183,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::GSV,
             data: "2,1,08,01,,083,46,02,17,308,,12,07,344,39,14,22,228,",
-            checksum: 0,
+            checksum: Some(0),
         })
         .unwrap();
         assert_eq!(data.gnss_type, GnssType::Gps);
@@ -235,7 +235,7 @@ mod tests {
             talker_id: "GL",
             message_id: SentenceType::GSV,
             data: "3,3,10,72,40,075,43,87,00,000,",
-            checksum: 0,
+            checksum: Some(0),
         })
         .unwrap();
         assert_eq!(data.gnss_type, GnssType::Glonass);
@@ -247,7 +247,7 @@ mod tests {
             talker_id: "GQ",
             message_id: SentenceType::GSV,
             data: "3,3,10,72,40,075,43,87,00,000,",
-            checksum: 0,
+            checksum: Some(0),
         })
         .unwrap();
         assert_eq!(data.gnss_type, GnssType::Qzss);

@@ -105,7 +105,7 @@ mod tests {
 
     fn run_parse_vtg(line: &str) -> Result<VtgData, Error> {
         let s = parse_nmea_sentence(line).expect("VTG sentence initial parse failed");
-        assert_eq!(s.checksum, s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
         parse_vtg(s)
     }
 

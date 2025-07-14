@@ -46,6 +46,10 @@ Supported sentences (alphabetically ordered):
 
 [`Nmea::parse()`]: https://docs.rs/nmea/latest/nmea/struct.Nmea.html#method.parse
 
+### Checksum calculation
+
+The checksum is ignored if the sentence does not contain it, otherwise is validated.
+
 ## How to contribute
 
 We have an ongoing effort to support as many sentences from `NMEA 0183` as possible,

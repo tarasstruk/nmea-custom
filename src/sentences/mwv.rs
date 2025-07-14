@@ -122,8 +122,8 @@ mod tests {
     #[test]
     fn test_parse_mwv() {
         let s = parse_nmea_sentence("$WIMWV,041.1,R,01.0,N,A*16").unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x16);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x16);
         let wimwv_data = parse_mwv(s).unwrap();
         assert_relative_eq!(41.1, wimwv_data.wind_direction.unwrap());
         assert_eq!(MwvReference::Relative, wimwv_data.reference.unwrap());

@@ -103,8 +103,8 @@ mod tests {
     #[test]
     fn test_parse_bww_full() {
         let sentence = parse_nmea_sentence("$GPBWW,213.8,T,218.0,M,TOWPT,FROMWPT*42").unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x42);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x42);
 
         let data = parse_bww(sentence).unwrap();
 
@@ -117,8 +117,8 @@ mod tests {
     #[test]
     fn test_parse_bww_with_optional_fields() {
         let sentence = parse_nmea_sentence("$GPBWW,,T,,M,,*4C").unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x4C);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x4C);
 
         let data = parse_bww(sentence).unwrap();
 

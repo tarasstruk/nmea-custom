@@ -98,8 +98,8 @@ mod tests {
     #[test]
     fn parse_bod_with_route_active_example_full() {
         let sentence = parse_nmea_sentence("$GPBOD,097.0,T,103.2,M,POINTB,POINTA*4A").unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x4A);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x4A);
 
         let data = parse_bod(sentence).unwrap();
         assert_relative_eq!(data.bearing_true.unwrap(), 97.0);
@@ -111,8 +111,8 @@ mod tests {
     #[test]
     fn parse_bod_with_route_active_missing_destination_waypoint_example_full() {
         let sentence = parse_nmea_sentence("$GPBOD,097.0,T,103.2,M,,POINTA*44").unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x44);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x44);
 
         let data = parse_bod(sentence).unwrap();
         assert_relative_eq!(data.bearing_true.unwrap(), 97.0);
@@ -126,8 +126,8 @@ mod tests {
         // this is equivalent to the "no route active" test, except here there is a comma with an empty field
         // before the checksum. This is just to make sure parsing is resilient to missing data.
         let sentence = parse_nmea_sentence("$GPBOD,097.0,T,103.2,M,POINTB,*47").unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x47);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x47);
 
         let data = parse_bod(sentence).unwrap();
         assert_relative_eq!(data.bearing_true.unwrap(), 97.0);
@@ -139,8 +139,8 @@ mod tests {
     #[test]
     fn parse_bod_no_route_active_example_full() {
         let sentence = parse_nmea_sentence("$GPBOD,099.3,T,105.6,M,POINTB*64").unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x64);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x64);
         let data = parse_bod(sentence).unwrap();
 
         assert_relative_eq!(data.bearing_true.unwrap(), 99.3);
@@ -152,8 +152,8 @@ mod tests {
     #[test]
     fn parse_bod_no_route_active_no_bearing_example_full() {
         let sentence = parse_nmea_sentence("$GPBOD,,T,105.6,M,POINTB*49").unwrap();
-        assert_eq!(sentence.checksum, sentence.calc_checksum());
-        assert_eq!(sentence.checksum, 0x49);
+        assert_eq!(sentence.checksum.unwrap(), sentence.calc_checksum());
+        assert_eq!(sentence.checksum.unwrap(), 0x49);
         let data = parse_bod(sentence).unwrap();
 
         assert!(data.bearing_true.is_none());

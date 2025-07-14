@@ -214,8 +214,8 @@ mod tests {
             "$GPRMC,225446.33,A,4916.45,N,12311.12,W,000.5,054.7,191194,020.3,E,A*2B",
         )
         .unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x2b);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x2b);
         let rmc_data = parse_rmc(s).unwrap();
         assert_eq!(
             rmc_data.fix_time,
@@ -249,8 +249,8 @@ mod tests {
             "$GPRMC,225446.33,A,4916.45,N,12311.12,W,000.5,054.7,191194,020.3,E*46",
         )
         .unwrap();
-        assert_eq!(s.checksum, s.calc_checksum());
-        assert_eq!(s.checksum, 0x46);
+        assert_eq!(s.checksum.unwrap(), s.calc_checksum());
+        assert_eq!(s.checksum.unwrap(), 0x46);
         let RmcData {
             fix_time,
             status_of_fix,

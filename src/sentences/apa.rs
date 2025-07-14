@@ -191,7 +191,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::APA,
             data: "A,A,0.10,R,N,V,V,011,M,DEST,011,M*42",
-            checksum: 0x3E,
+            checksum: Some(0x3E),
         })
         .unwrap();
 
@@ -210,7 +210,7 @@ mod tests {
     #[test]
     fn parse_apa_full_sentence() {
         let sentence = parse_nmea_sentence("$GPAPA,A,A,0.10,R,N,V,V,011,M,DEST,011,M*42").unwrap();
-        assert_eq!(sentence.checksum, 0x42);
+        assert_eq!(sentence.checksum.unwrap(), 0x42);
         assert_eq!(sentence.calc_checksum(), 0x42);
 
         let data = parse_apa(sentence).unwrap();
@@ -233,7 +233,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::APA,
             data: "G,A,0.10,R,N,V,V,011,M,DEST,011,M*4",
-            checksum: 0x0,
+            checksum: Some(0x0),
         })
         .unwrap();
     }
@@ -245,7 +245,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::APA,
             data: "A,A,0.10,R,N,V,V,011,X,DEST,011,M*4",
-            checksum: 0x0,
+            checksum: Some(0x0),
         })
         .unwrap();
     }
@@ -257,7 +257,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::APA,
             data: "A,A,0.10,R,C,V,V,011,M,DEST,011,M*4",
-            checksum: 0x0,
+            checksum: Some(0x0),
         })
         .unwrap();
     }
@@ -268,7 +268,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::ABK,
             data: "A,A,0.10,R,N,V,V,011,M,DEST,011,M*42",
-            checksum: 0x43,
+            checksum: Some(0x43),
         })
         .unwrap_err();
 

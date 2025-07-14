@@ -103,7 +103,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::AAM,
             data: "A,V,0.10,N,WPTNME",
-            checksum: 0x0,
+            checksum: Some(0x0),
         })
         .unwrap();
 
@@ -121,7 +121,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::AAM,
             data: "G,V,0.10,N,WPTNME",
-            checksum: 0x0,
+            checksum: Some(0x0),
         })
         .unwrap();
     }
@@ -133,7 +133,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::AAM,
             data: "V,X,0.10,N,WPTNME",
-            checksum: 0x0,
+            checksum: Some(0x0),
         })
         .unwrap();
     }
@@ -145,7 +145,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::AAM,
             data: "V,A,0.10,P,WPTNME",
-            checksum: 0x0,
+            checksum: Some(0x0),
         })
         .unwrap();
     }
@@ -153,7 +153,7 @@ mod tests {
     #[test]
     fn parse_aam_full_sentence() {
         let sentence = parse_nmea_sentence("$GPAAM,A,A,0.10,N,WPTNME*32").unwrap();
-        assert_eq!(sentence.checksum, 0x32);
+        assert_eq!(sentence.checksum.unwrap(), 0x32);
         assert_eq!(sentence.calc_checksum(), 0x32);
 
         let data = parse_aam(sentence).unwrap();
@@ -170,7 +170,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::ABK,
             data: "A,V,0.10,N,WPTNME",
-            checksum: 0x43,
+            checksum: Some(0x43),
         })
         .unwrap_err();
 
