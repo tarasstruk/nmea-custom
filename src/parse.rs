@@ -1,16 +1,15 @@
 use core::str;
 
 use nom::{
-    bytes::complete::{take, take_until},
+    bytes::complete::{take, take_while},
     character::complete::char,
     combinator::map_res,
     sequence::preceded,
     IResult,
 };
 
-use cfg_if::cfg_if;
-
 use crate::{sentences::*, Error, SentenceType};
+use cfg_if::cfg_if;
 
 /// The maximum message length parsable by the crate.
 ///
@@ -55,6 +54,10 @@ impl NmeaSentence<'_> {
                 .chain(self.data.as_bytes()),
         )
     }
+
+    pub fn update_checksum(&mut self) {
+        self.checksum = self.calc_checksum();
+    }
 }
 
 pub(crate) fn checksum<'a, I: Iterator<Item = &'a u8>>(bytes: I) -> u8 {
@@ -75,22 +78,30 @@ fn parse_sentence_type(i: &str) -> IResult<&str, SentenceType> {
     })(i)
 }
 
+fn take_while_no_star(s: &str) -> IResult<&str, &str> {
+    take_while(|c| c != '*')(s)
+}
+
 fn do_parse_nmea_sentence(i: &str) -> IResult<&str, NmeaSentence> {
     let (i, talker_id) = preceded(char('$'), take(2usize))(i)?;
     let (i, message_id) = parse_sentence_type(i)?;
     let (i, _) = char(',')(i)?;
-    let (i, data) = take_until("*")(i)?;
-    let (i, checksum) = parse_checksum(i)?;
+    let (i, data) = take_while_no_star(i)?;
+    let mut sentence = NmeaSentence {
+        talker_id,
+        message_id,
+        data,
+        checksum: 0,
+    };
 
-    Ok((
-        i,
-        NmeaSentence {
-            talker_id,
-            message_id,
-            data,
-            checksum,
-        },
-    ))
+    if i.len() > 0 {
+        let (_i, value) = parse_checksum(i)?;
+        sentence.checksum = value;
+    } else {
+        sentence.update_checksum()
+    };
+
+    Ok((i, sentence))
 }
 
 pub fn parse_nmea_sentence(sentence: &str) -> core::result::Result<NmeaSentence, Error<'_>> {
