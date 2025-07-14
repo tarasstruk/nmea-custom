@@ -1,7 +1,7 @@
 use core::str;
 
 use nom::{
-    bytes::complete::{take, take_until},
+    bytes::complete::{take, take_while},
     character::complete::char,
     combinator::map_res,
     sequence::preceded,
@@ -55,6 +55,10 @@ impl NmeaSentence<'_> {
                 .chain(self.data.as_bytes()),
         )
     }
+
+    pub fn update_checksum(&mut self) {
+        self.checksum = self.calc_checksum();
+    }
 }
 
 pub(crate) fn checksum<'a, I: Iterator<Item = &'a u8>>(bytes: I) -> u8 {
@@ -75,29 +79,37 @@ fn parse_sentence_type(i: &str) -> IResult<&str, SentenceType> {
     })(i)
 }
 
-fn do_parse_nmea_sentence(i: &str) -> IResult<&str, NmeaSentence> {
+fn take_while_no_star(s: &str) -> IResult<&str, &str> {
+    take_while(|c| c != '*')(s)
+}
+
+fn do_parse_nmea_sentence(i: &str) -> core::result::Result<NmeaSentence, Error<'_>> {
     let (i, talker_id) = preceded(char('$'), take(2usize))(i)?;
     let (i, message_id) = parse_sentence_type(i)?;
     let (i, _) = char(',')(i)?;
-    let (i, data) = take_until("*")(i)?;
-    let (i, checksum) = parse_checksum(i)?;
+    let (i, data) = take_while_no_star(i)?;
+    let mut sentence = NmeaSentence {
+        talker_id,
+        message_id,
+        data,
+        checksum: 0,
+    };
 
-    Ok((
-        i,
-        NmeaSentence {
-            talker_id,
-            message_id,
-            data,
-            checksum,
-        },
-    ))
+    if i.len() > 0 {
+        let (_i, value) = parse_checksum(i)?;
+        sentence.checksum = value;
+    } else {
+        sentence.update_checksum()
+    };
+
+    Ok(sentence)
 }
 
 pub fn parse_nmea_sentence(sentence: &str) -> core::result::Result<NmeaSentence, Error<'_>> {
     if sentence.len() > SENTENCE_MAX_LEN {
         Err(Error::SentenceLength(sentence.len()))
     } else {
-        Ok(do_parse_nmea_sentence(sentence)?.1)
+        do_parse_nmea_sentence(sentence)
     }
 }
 
@@ -476,5 +488,31 @@ pub fn parse_str(sentence_input: &str) -> Result<ParseResult, Error> {
             calculated: calculated_checksum,
             found: nmea_sentence.checksum,
         })
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::parse_str;
+
+    #[test]
+    fn parse_str_feed_with_correct_checksum() {
+        let input = "$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,*76";
+        let result = parse_str(input);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn parse_str_feed_with_incorrect_checksum() {
+        let input = "$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,*88";
+        let result = parse_str(input);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_str_feed_with_missing_checksum() {
+        let input = "$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,";
+        let result = parse_str(input);
+        assert!(result.is_ok());
     }
 }
