@@ -78,7 +78,7 @@ fn take_while_no_star(s: &str) -> IResult<&str, &str> {
     take_while(|c| c != '*')(s)
 }
 
-fn do_parse_nmea_sentence(i: &str) -> IResult<&str, NmeaSentence> {
+fn do_parse_nmea_sentence(i: &str) -> core::result::Result<NmeaSentence, Error<'_>> {
     let (i, talker_id) = preceded(char('$'), take(2usize))(i)?;
     let (i, message_id) = parse_sentence_type(i)?;
     let (i, _) = char(',')(i)?;
@@ -90,22 +90,19 @@ fn do_parse_nmea_sentence(i: &str) -> IResult<&str, NmeaSentence> {
         None
     };
 
-    Ok((
-        i,
-        NmeaSentence {
-            talker_id,
-            message_id,
-            data,
-            checksum,
-        },
-    ))
+    Ok(NmeaSentence {
+        talker_id,
+        message_id,
+        data,
+        checksum,
+    })
 }
 
 pub fn parse_nmea_sentence(sentence: &str) -> core::result::Result<NmeaSentence, Error<'_>> {
     if sentence.len() > SENTENCE_MAX_LEN {
         Err(Error::SentenceLength(sentence.len()))
     } else {
-        Ok(do_parse_nmea_sentence(sentence)?.1)
+        do_parse_nmea_sentence(sentence)
     }
 }
 
