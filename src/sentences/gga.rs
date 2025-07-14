@@ -250,7 +250,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::GGA,
             data: "033745.222,5650.82344,N,03548.9778,E,1,07,1.8,101.2,M,14.7,M,,",
-            checksum: 0x57,
+            checksum: Some(0x57),
         })
         .unwrap();
 
@@ -273,7 +273,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::GGA,
             data: "033745.222222222,5650.82344,N,03548.9778,E,1,07,1.8,101.2,M,14.7,M,,",
-            checksum: 0x57,
+            checksum: Some(0x57),
         })
         .unwrap();
 
@@ -296,7 +296,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::GGA,
             data: "033745.000,5650.82344,N,03548.9778,E,1,07,1.8,101.2,M,14.7,M,,",
-            checksum: 0x57,
+            checksum: Some(0x57),
         })
         .unwrap();
 
@@ -318,7 +318,7 @@ mod tests {
             talker_id: "GP",
             message_id: SentenceType::GGA,
             data: ",5650.82344,N,03548.9778,E,1,07,1.8,101.2,M,14.7,M,,",
-            checksum: 0x57,
+            checksum: Some(0x57),
         })
         .unwrap();
 
