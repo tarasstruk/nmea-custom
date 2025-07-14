@@ -489,3 +489,29 @@ pub fn parse_str(sentence_input: &str) -> Result<ParseResult, Error> {
         })
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::parse_str;
+
+    #[test]
+    fn parse_str_feed_with_correct_checksum() {
+        let input = "$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,*76";
+        let result = parse_str(input);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn parse_str_feed_with_incorrect_checksum() {
+        let input = "$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,*88";
+        let result = parse_str(input);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_str_feed_with_missing_checksum() {
+        let input = "$GPGGA,092750.000,5321.6802,N,00630.3372,W,1,8,1.03,61.7,M,55.2,M,,";
+        let result = parse_str(input);
+        assert!(result.is_ok());
+    }
+}
